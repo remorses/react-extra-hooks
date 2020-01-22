@@ -4,11 +4,14 @@
 
 # hooks
 
-- usePromise
+-   usePromise
+-   useDebounce
+-   useLocalStorage
 
 ## Examples
 
 usePromise
+
 ```tsx
 import { strict as assert } from 'assert'
 import { usePromise } from 'react-extra-hooks'
@@ -31,4 +34,3 @@ const App = () => {
     return <div>{result?.x}</div>
 }
 ```
-
