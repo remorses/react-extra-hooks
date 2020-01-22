@@ -1,5 +1,5 @@
 export { usePromise, usePromiseOutput } from './usePromise'
-export { useAsync, useAsyncOutput } from './useAsync'
+export { useLazyPromise, useLazyPromiseOutput } from './useLazyPromise'
 export { useDebounce } from './useDebounce'
 export { useLocalStorage } from './useLoaclStorage'
 

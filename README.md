@@ -5,7 +5,7 @@
 # hooks
 
 -   usePromise
--   useAsync
+-   useLazyPromise
 -   useDebounce
 -   useLocalStorage
 
@@ -35,10 +35,10 @@ const App = () => {
 }
 ```
 
-useAsync
+useLazyPromise
 
 ```tsx
-import { useAsync } from 'react-extra-hooks'
+import { useLazyPromise } from 'react-extra-hooks'
 import React from 'react'
 
 const sleep = (t) => new Promise((res) => setTimeout(res, t))
@@ -51,8 +51,8 @@ async function effect() {
     }
 }
 
-const UseAsyncExample = () => {
-    const { execute, result, loading, error } = usePromise(pp)
+const UseLazyPromiseExample = () => {
+    const [execute, {result, loading, error }] = useLazyPromise(pp)
     if (loading) {
         return <>loading</>
     }

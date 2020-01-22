@@ -1,6 +1,6 @@
 import { strict as assert } from 'assert'
 import DOM from 'react-dom'
-import { usePromise, useAsync } from '../src'
+import { usePromise, useLazyPromise } from '../src'
 import React from 'react'
 
 const sleep = (t) => new Promise((res) => setTimeout(res, t))
@@ -29,8 +29,8 @@ async function effect(n: number=90) {
     }
 }
 
-const UseAsyncExample = () => {
-    const { execute, result, loading, error } = useAsync(effect)
+const UseLazyPromiseExample = () => {
+    const [execute, {result, loading, error }] = useLazyPromise(effect)
     if (loading) {
         return <>loading</>
     }
@@ -52,7 +52,7 @@ const App = () => {
     return (
         <>
             <UsePromiseExample />
-            <UseAsyncExample />
+            <UseLazyPromiseExample />
         </>
     )
 }

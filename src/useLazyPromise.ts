@@ -35,16 +35,18 @@ function reducer(state, action) {
     }
 }
 
-export interface useAsyncOutput<Argument, ResultType> {
-    execute: (arg?: Argument) => Promise<ResultType>
-    result?: ResultType
-    loading: boolean
-    error?: Error
-}
+type useLazyPromiseOutput<Argument, ResultType> = [
+    (arg?: Argument) => Promise<ResultType>,
+    {
+        result?: ResultType
+        loading: boolean
+        error?: Error
+    }
+]
 
-export function useAsync<Argument, ResultType = any>(
+export function useLazyPromise<Argument, ResultType = any>(
     promise: (x?: Argument) => Promise<ResultType>
-): useAsyncOutput<Argument, ResultType> {
+): useLazyPromiseOutput<Argument, ResultType> {
     const [{ error, result, loading }, dispatch] = useReducer(reducer, {
         error: undefined,
         result: undefined,
@@ -77,5 +79,5 @@ export function useAsync<Argument, ResultType = any>(
         [promise, dispatch, canceled]
     )
 
-    return { result, error, loading, execute }
+    return [execute, { result, error, loading }]
 }
