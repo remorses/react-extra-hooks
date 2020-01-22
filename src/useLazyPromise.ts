@@ -35,7 +35,7 @@ function reducer(state, action) {
     }
 }
 
-type useLazyPromiseOutput<Argument, ResultType> = [
+export type useLazyPromiseOutput<Argument, ResultType> = [
     (arg?: Argument) => Promise<ResultType>,
     {
         result?: ResultType
