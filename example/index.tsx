@@ -1,17 +1,6 @@
-# react-extra-hooks
-
-`yarn add react-extra-hooks`
-
-# hooks
-
-- usePromise
-
-## Examples
-
-usePromise
-```tsx
 import { strict as assert } from 'assert'
-import { usePromise } from 'react-extra-hooks'
+import DOM from 'react-dom'
+import { usePromise } from '../src'
 import React from 'react'
 
 const sleep = (t) => new Promise((res) => setTimeout(res, t))
@@ -30,5 +19,5 @@ const App = () => {
     }
     return <div>{result?.x}</div>
 }
-```
 
+DOM.render(<App />, document.getElementById('root'))
