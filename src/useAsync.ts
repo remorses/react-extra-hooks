@@ -50,11 +50,9 @@ export function useAsync<ResultType = any>(
         result: undefined,
         state: states.pending
     })
-
     let canceled = false
-
-    dispatch({ type: states.pending })
-    const execute = useCallback<() => Promise<ResultType>>(() => {
+    const execute = useCallback(() => {
+        dispatch({ type: states.pending })
         return promise()
             .then((result) => {
                 if (!canceled) {
@@ -74,7 +72,7 @@ export function useAsync<ResultType = any>(
                 }
                 throw error
             })
-    }, [promise])
+    }, [promise, dispatch, canceled])
 
     return { result, error, loading, execute }
 }
