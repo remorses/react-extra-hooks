@@ -1,13 +1,16 @@
 {
-  "name": "nodejs-lib-template",
+  "name": "react-extra-hooks",
   "_": "[bump]",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["/dist/*"],
+  "files": [
+    "/dist/*"
+  ],
   "scripts": {
-    "test": "mocha --require ts-node/register --timeout 10000 tests/* --colors"
+    "test": "mocha --require ts-node/register --timeout 10000 tests/* --colors",
+    "example": "parcel example/index.html"
   },
   "keywords": [],
   "author": "Tommaso De Rossi, morse <beats.by.morse@gmail.com>",
@@ -16,7 +19,9 @@
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.0.7",
     "mocha": "^6.1.4",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
     "ts-node": "^8.2.0",
-    "typescript": "^3.5.1"
+    "typescript": "^3.7.5"
   }
 }
