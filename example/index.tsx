@@ -20,12 +20,12 @@ const UsePromiseExample = () => {
     return <div>{result?.x}</div>
 }
 
-async function effect() {
+async function effect(n: number=90) {
     await sleep(400)
     // throw Error('xxx')
-    alert('executed')
+    alert('executed with n=' + n)
     return {
-        x: 9
+        x: n
     }
 }
 
@@ -40,9 +40,10 @@ const UseAsyncExample = () => {
     if (error) {
         return <div>{error.message}</div>
     }
+
     return (
         <div>
-            <button onClick={execute}>execute promise</button>
+            <button onClick={() => execute(9)}>execute promise</button>
         </div>
     )
 }

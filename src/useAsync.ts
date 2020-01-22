@@ -35,44 +35,47 @@ function reducer(state, action) {
     }
 }
 
-export interface useAsyncOutput<ResultType> {
-    execute: () => Promise<ResultType>
+export interface useAsyncOutput<Argument, ResultType> {
+    execute: (arg?: Argument) => Promise<ResultType>
     result?: ResultType
     loading: boolean
     error?: Error
 }
 
-export function useAsync<ResultType = any>(
-    promise: () => Promise<ResultType>
-): useAsyncOutput<ResultType> {
+export function useAsync<Argument, ResultType = any>(
+    promise: (x?: Argument) => Promise<ResultType>
+): useAsyncOutput<Argument, ResultType> {
     const [{ error, result, loading }, dispatch] = useReducer(reducer, {
         error: undefined,
         result: undefined,
         state: states.pending
     })
     let canceled = false
-    const execute = useCallback(() => {
-        dispatch({ type: states.pending })
-        return promise()
-            .then((result) => {
-                if (!canceled) {
-                    dispatch({
-                        payload: result,
-                        type: states.resolved
-                    })
-                }
-                return result
-            })
-            .catch((error) => {
-                if (!canceled) {
-                    dispatch({
-                        payload: error,
-                        type: states.rejected
-                    })
-                }
-                throw error
-            })
-    }, [promise, dispatch, canceled])
+    const execute = useCallback(
+        (arg) => {
+            dispatch({ type: states.pending })
+            return promise(arg)
+                .then((result) => {
+                    if (!canceled) {
+                        dispatch({
+                            payload: result,
+                            type: states.resolved
+                        })
+                    }
+                    return result
+                })
+                .catch((error) => {
+                    if (!canceled) {
+                        dispatch({
+                            payload: error,
+                            type: states.rejected
+                        })
+                    }
+                    throw error
+                })
+        },
+        [promise, dispatch, canceled]
+    )
 
     return { result, error, loading, execute }
 }
