@@ -22,6 +22,7 @@ const UsePromiseExample = () => {
 
 async function effect() {
     await sleep(400)
+    // throw Error('xxx')
     alert('executed')
     return {
         x: 9
