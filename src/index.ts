@@ -1,4 +1,5 @@
-export { usePromise } from './usePromise'
+export { usePromise, usePromiseOutput } from './usePromise'
+export { useAsync, useAsyncOutput } from './useAsync'
 export { useDebounce } from './useDebounce'
 export { useLocalStorage } from './useLoaclStorage'
 

@@ -43,7 +43,7 @@ function reducer(state, action) {
     }
 }
 
-interface usePromiseOutput<ResultType> {
+export interface usePromiseOutput<ResultType> {
     result?: ResultType
     loading: boolean
     error?: Error
