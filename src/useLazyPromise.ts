@@ -3,7 +3,7 @@ import { useEffect, useReducer, useCallback } from 'react'
 const states = {
     pending: 'pending',
     rejected: 'rejected',
-    resolved: 'resolved'
+    resolved: 'resolved',
 }
 
 function reducer(state, action) {
@@ -12,21 +12,21 @@ function reducer(state, action) {
             return {
                 error: undefined,
                 result: undefined,
-                loading: true
+                loading: true,
             }
 
         case states.resolved:
             return {
                 error: undefined,
                 result: action.payload,
-                loading: false
+                loading: false,
             }
 
         case states.rejected:
             return {
                 error: action.payload,
                 result: undefined,
-                loading: false
+                loading: false,
             }
 
         /* istanbul ignore next */
@@ -44,39 +44,75 @@ export type useLazyPromiseOutput<Argument, ResultType> = [
     }
 ]
 
+let memoryCache = { lastHash: '' }
+
+function updateCache({ hash, result, cacheSize, cacheExpirationSeconds }) {
+    memoryCache[hash] = result
+    if (
+        memoryCache.lastHash &&
+        Object.keys(memoryCache).length + 1 > cacheSize
+    ) {
+        delete memoryCache[memoryCache.lastHash]
+    }
+    memoryCache.lastHash = hash
+    setTimeout(
+        (hash) => {
+            delete memoryCache[hash]
+        },
+        cacheExpirationSeconds * 1000,
+        hash
+    )
+}
+
 export function useLazyPromise<Argument, ResultType = any>(
-    promise: (x?: Argument) => Promise<ResultType>
+    promise: (x?: Argument) => Promise<ResultType>,
+    {
+        cache = false,
+        promiseId = null,
+        cacheExpirationSeconds = 60,
+        cacheSize = 10,
+    } = {}
 ): useLazyPromiseOutput<Argument, ResultType> {
     const [{ error, result, loading }, dispatch] = useReducer(reducer, {
         error: undefined,
         result: undefined,
-        state: states.pending
+        state: states.pending,
     })
-    let canceled = false
     const execute = useCallback(
         (arg) => {
+            const hash = JSON.stringify({ promiseId, arg })
+            if (cache) {
+                let hit = memoryCache[hash]
+                if (hit) {
+                    return hit
+                }
+            }
             dispatch({ type: states.pending })
             return promise(arg)
                 .then((result) => {
-                    if (!canceled) {
-                        dispatch({
-                            payload: result,
-                            type: states.resolved
+                    if (cache) {
+                        updateCache({
+                            hash,
+                            cacheExpirationSeconds,
+                            cacheSize,
+                            result,
                         })
                     }
+                    dispatch({
+                        payload: result,
+                        type: states.resolved,
+                    })
                     return result
                 })
                 .catch((error) => {
-                    if (!canceled) {
-                        dispatch({
-                            payload: error,
-                            type: states.rejected
-                        })
-                    }
+                    dispatch({
+                        payload: error,
+                        type: states.rejected,
+                    })
                     throw error
                 })
         },
-        [promise, dispatch, canceled]
+        [promise, dispatch]
     )
 
     return [execute, { result, error, loading }]

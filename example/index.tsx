@@ -1,14 +1,14 @@
 import { strict as assert } from 'assert'
 import DOM from 'react-dom'
 import { usePromise, useLazyPromise } from '../src'
-import React from 'react'
+import React, { useState } from 'react'
 
 const sleep = (t) => new Promise((res) => setTimeout(res, t))
 
 async function pp() {
     await sleep(400)
     return {
-        x: 6
+        x: 6,
     }
 }
 
@@ -20,22 +20,22 @@ const UsePromiseExample = () => {
     return <div>{result?.x}</div>
 }
 
-async function effect(n: number=90) {
-    await sleep(400)
+async function effect(n: string) {
+    await sleep(1000)
     // throw Error('xxx')
     alert('executed with n=' + n)
     return {
-        x: n
+        x: n,
     }
 }
 
 const UseLazyPromiseExample = () => {
-    const [execute, {result, loading, error }] = useLazyPromise(effect)
+    const [arg, set] = useState('')
+    const [execute, { result, loading, error }] = useLazyPromise(effect, {
+        cache: true,
+    })
     if (loading) {
         return <>loading</>
-    }
-    if (result) {
-        return <div>{result?.x}</div>
     }
     if (error) {
         return <div>{error.message}</div>
@@ -43,7 +43,11 @@ const UseLazyPromiseExample = () => {
 
     return (
         <div>
-            <button onClick={() => execute(9)}>execute promise</button>
+            <input onChange={(e) => set(e.target.value)} value={arg} />
+            <button onClick={() => execute(arg)}>execute promise</button>
+            <code>
+                <div>{result?.x}</div>
+            </code>
         </div>
     )
 }
