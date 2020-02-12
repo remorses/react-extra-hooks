@@ -11,7 +11,7 @@ function resolvePromise(promise): Promise<any> {
 const states = {
     pending: 'pending',
     rejected: 'rejected',
-    resolved: 'resolved'
+    resolved: 'resolved',
 }
 
 function reducer(state, action) {
@@ -20,21 +20,21 @@ function reducer(state, action) {
             return {
                 error: undefined,
                 result: undefined,
-                loading: true
+                loading: true,
             }
 
         case states.resolved:
             return {
                 error: undefined,
                 result: action.payload,
-                loading: false
+                loading: false,
             }
 
         case states.rejected:
             return {
                 error: action.payload,
                 result: undefined,
-                loading: false
+                loading: false,
             }
 
         /* istanbul ignore next */
@@ -49,14 +49,14 @@ export interface usePromiseOutput<ResultType> {
     error?: Error
 }
 
-export function usePromise<ResultType=any>(
+export function usePromise<ResultType = any>(
     promise: Promise<ResultType> | (() => Promise<ResultType>),
     inputs: any[] = []
 ): usePromiseOutput<ResultType> {
     const [{ error, result, loading }, dispatch] = useReducer(reducer, {
         error: undefined,
         result: undefined,
-        state: states.pending
+        state: states.pending,
     })
 
     useEffect(() => {
@@ -71,18 +71,22 @@ export function usePromise<ResultType=any>(
         dispatch({ type: states.pending })
 
         promise.then(
-            (result) =>
-                !canceled &&
-                dispatch({
-                    payload: result,
-                    type: states.resolved
-                }),
-            (error) =>
-                !canceled &&
-                dispatch({
-                    payload: error,
-                    type: states.rejected
-                })
+            (result) => {
+                if (!canceled) {
+                    dispatch({
+                        payload: result,
+                        type: states.resolved,
+                    })
+                }
+            },
+            (error) => {
+                if (!canceled) {
+                    dispatch({
+                        payload: error,
+                        type: states.rejected,
+                    })
+                }
+            }
         )
 
         return () => {
@@ -92,6 +96,3 @@ export function usePromise<ResultType=any>(
 
     return { result, error, loading }
 }
-
-
-

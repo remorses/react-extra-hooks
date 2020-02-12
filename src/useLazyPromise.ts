@@ -1,4 +1,5 @@
 import { useEffect, useReducer, useCallback } from 'react'
+import { memoryCache, updateCache } from './cache'
 
 const states = {
     pending: 'pending',
@@ -43,26 +44,6 @@ export type useLazyPromiseOutput<Argument, ResultType> = [
         error?: Error
     }
 ]
-
-let memoryCache = { lastHash: '' }
-
-function updateCache({ hash, result, cacheSize, cacheExpirationSeconds }) {
-    memoryCache[hash] = result
-    if (
-        memoryCache.lastHash &&
-        Object.keys(memoryCache).length + 1 > cacheSize
-    ) {
-        delete memoryCache[memoryCache.lastHash]
-    }
-    memoryCache.lastHash = hash
-    setTimeout(
-        (hash) => {
-            delete memoryCache[hash]
-        },
-        cacheExpirationSeconds * 1000,
-        hash
-    )
-}
 
 export function useLazyPromise<Argument, ResultType = any>(
     promise: (x?: Argument) => Promise<ResultType>,
