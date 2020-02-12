@@ -1,4 +1,9 @@
+import sortObject from 'sort-keys-recursive'
 export let memoryCache = { lastHash: '' }
+
+export function hashArg(arg) {
+    return JSON.stringify(sortObject(arg))
+}
 
 export function updateCache({
     hash,

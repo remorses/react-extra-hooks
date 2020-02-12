@@ -1,5 +1,5 @@
-import { useEffect, useReducer, useCallback } from 'react'
-import { memoryCache, updateCache } from './cache'
+import { useCallback, useReducer } from 'react'
+import { hashArg, memoryCache, updateCache } from './cache'
 
 const states = {
     pending: 'pending',
@@ -61,7 +61,7 @@ export function useLazyPromise<Argument, ResultType = any>(
     })
     const execute = useCallback(
         (arg) => {
-            const hash = JSON.stringify({ promiseId, arg })
+            const hash = hashArg({ promiseId, arg })
             if (cache) {
                 let hit = memoryCache[hash]
                 if (hit) {
