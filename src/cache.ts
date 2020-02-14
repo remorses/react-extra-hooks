@@ -2,7 +2,14 @@ import sortObject from 'sort-keys-recursive'
 
 export const reactExtraHooksCacheKey = 'reactExtraHooksCache'
 
-let win = window ?? {}
+function getWindow() {
+    if (typeof window === 'undefined') {
+        return {}
+    }
+    return window
+}
+
+const win = getWindow()
 win[reactExtraHooksCacheKey] = win[reactExtraHooksCacheKey] || {}
 export let memoryCache = win[reactExtraHooksCacheKey]
 
