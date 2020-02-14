@@ -11,6 +11,9 @@ export function updateCache({
     cacheSize,
     cacheExpirationSeconds,
 }) {
+    if (!result) {
+        return
+    }
     memoryCache[hash] = result
     if (
         memoryCache.lastHash &&
