@@ -65,6 +65,10 @@ export function useLazyPromise<Argument, ResultType = any>(
             if (cache) {
                 let hit = memoryCache[hash]
                 if (hit) {
+                    dispatch({
+                        payload: hit,
+                        type: states.resolved,
+                    })
                     return hit
                 }
             }
