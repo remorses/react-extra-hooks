@@ -1,5 +1,9 @@
 import sortObject from 'sort-keys-recursive'
-export let memoryCache = { lastHash: '' }
+
+export const reactExtraHooksCacheKey = 'reactExtraHooksCache'
+
+window[reactExtraHooksCacheKey] = window[reactExtraHooksCacheKey] || {}
+export let memoryCache = window[reactExtraHooksCacheKey]
 
 export function hashArg(arg) {
     return JSON.stringify(sortObject(arg))
