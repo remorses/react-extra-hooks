@@ -67,8 +67,17 @@ const UseLazyPromiseExample = () => {
 }
 ```
 
-_useLazyPromise with in memory cache_, supports the options `{promiseId: string, cacheSize: numer, cacheExpirationSeconds: number}`, use promiseId in case you have multiple calls of usePromise that get the same input argument.
-The cache is invalidated as soon as you refresh the page.
+**useLazyPromise with in memory cache**, supports the options `{promiseId: string, cacheSize: numer, cacheExpirationSeconds: number}`.
+Every useLazyPromise cached the result based on
+
+-   the argument passed to the `execute` function
+-   the `promiseId` option (defaults to the name of the promise)
+
+The cache is invalidated when
+
+-   the page is refreshed
+-   the cacheExpirationSeconds (defaults to 120 secods) times out
+-   the cache overflows his size (that defaults to 50 elements), the first cached value is discarded
 
 ```tsx
 import { useLazyPromise } from 'react-extra-hooks'

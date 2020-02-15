@@ -1,5 +1,5 @@
 import { useCallback, useReducer } from 'react'
-import { hashArg, memoryCache, updateCache } from './cache'
+import { hashArg, memoryCache, updateCache, CacheaOptions } from './cache'
 
 const states = {
     pending: 'pending',
@@ -49,16 +49,17 @@ export function useLazyPromise<Argument, ResultType = any>(
     promise: (x?: Argument) => Promise<ResultType>,
     {
         cache = false,
-        promiseId = null,
-        cacheExpirationSeconds = 60,
+        promiseId,
+        cacheExpirationSeconds = 120,
         cacheSize = 10,
-    } = {}
+    } = {} as CacheaOptions
 ): useLazyPromiseOutput<Argument, ResultType> {
     const [{ error, result, loading }, dispatch] = useReducer(reducer, {
         error: undefined,
         result: undefined,
         state: states.pending,
     })
+    promiseId = promiseId ?? promise.name
     const execute = useCallback(
         (arg) => {
             const hash = hashArg({ promiseId, arg })

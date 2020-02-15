@@ -17,6 +17,13 @@ export function hashArg(arg) {
     return JSON.stringify(sortObject(arg))
 }
 
+export interface CacheaOptions {
+    cache?: boolean
+    promiseId?: string // defaults to the name of the function passed tp useLazyPromise
+    cacheExpirationSeconds?: number
+    cacheSize?: number
+}
+
 export function updateCache({
     hash,
     result,
