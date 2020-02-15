@@ -51,7 +51,7 @@ export function useLazyPromise<Argument, ResultType = any>(
         cache = false,
         promiseId,
         cacheExpirationSeconds = 120,
-        cacheSize = 10,
+        cacheSize = 50,
     } = {} as CacheaOptions
 ): useLazyPromiseOutput<Argument, ResultType> {
     const [{ error, result, loading }, dispatch] = useReducer(reducer, {

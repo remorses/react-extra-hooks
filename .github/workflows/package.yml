@@ -1,6 +1,5 @@
 name: Node.js Package
 
-
 on:
   push:
     branches:
@@ -36,10 +35,6 @@ jobs:
       #     set -x
       #     docker build . -t xmorse/example:latest
       #     docker push xmorse/example:latest
-
-
-
-
   # publish-gpr:
   #   needs: build
   #   runs-on: ubuntu-latest
@@ -53,15 +48,3 @@ jobs:
   #     - run: npm publish
   #       env:
   #         NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
