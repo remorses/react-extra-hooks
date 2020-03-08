@@ -1,7 +1,7 @@
 import { strict as assert } from 'assert'
 import DOM from 'react-dom'
 import { usePromise, useLazyPromise } from '../src'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 const sleep = (t) => new Promise((res) => setTimeout(res, t))
 
@@ -11,13 +11,34 @@ async function pp() {
         x: 6,
     }
 }
+async function gg(f) {
+    console.log(f)
+    await sleep(100)
+    return {
+        x: f,
+    }
+}
+
 
 const UsePromiseExample = () => {
-    const { result, loading, error } = usePromise(pp)
+    const [num, setNum] = useState(0)
+    useEffect(() => {
+        setInterval(() => setNum(x => x+1), 3000)
+    }, [])
+    const { result, loading, error } = usePromise(gg, {
+        cache: true,
+        args: [num],
+    })
+    const { result: r2 } = usePromise((f) => gg(f), { cache: true, args: ['2'] })
     if (loading) {
         return <>loading</>
     }
-    return <div>{result?.x}</div>
+    return (
+        <div>
+            <h1>{r2?.x}</h1>
+            <h1>{result?.x}</h1>
+        </div>
+    )
 }
 
 async function effect(n: string) {

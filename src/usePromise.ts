@@ -1,46 +1,12 @@
 import { useEffect, useReducer } from 'react'
+import { useLazyPromise, useLazyPromiseOutput } from './useLazyPromise'
+import { CacheaOptions } from './cache'
 
-function resolvePromise(promise): Promise<any> {
-    if (typeof promise === 'function') {
-        return promise()
+function makeCallback(promise) {
+    if (promise.then) {
+        return () => promise
     }
-
     return promise
-}
-
-const states = {
-    pending: 'pending',
-    rejected: 'rejected',
-    resolved: 'resolved',
-}
-
-function reducer(state, action) {
-    switch (action.type) {
-        case states.pending:
-            return {
-                error: undefined,
-                result: undefined,
-                loading: true,
-            }
-
-        case states.resolved:
-            return {
-                error: undefined,
-                result: action.payload,
-                loading: false,
-            }
-
-        case states.rejected:
-            return {
-                error: action.payload,
-                result: undefined,
-                loading: false,
-            }
-
-        /* istanbul ignore next */
-        default:
-            return state
-    }
 }
 
 export interface usePromiseOutput<ResultType> {
@@ -50,49 +16,15 @@ export interface usePromiseOutput<ResultType> {
 }
 
 export function usePromise<ResultType = any>(
-    promise: Promise<ResultType> | (() => Promise<ResultType>),
-    inputs: any[] = []
+    promise: Promise<ResultType> | ((...args: any) => Promise<ResultType>),
+    options: CacheaOptions & { args?: any[] } = {},
 ): usePromiseOutput<ResultType> {
-    const [{ error, result, loading }, dispatch] = useReducer(reducer, {
-        error: undefined,
-        result: undefined,
-        state: states.pending,
-    })
-
+    const [execute, { result, error, loading=true }] = useLazyPromise(
+        makeCallback(promise),
+        options,
+    )
     useEffect(() => {
-        promise = resolvePromise(promise)
-
-        if (!promise) {
-            return
-        }
-
-        let canceled = false
-
-        dispatch({ type: states.pending })
-
-        promise.then(
-            (result) => {
-                if (!canceled) {
-                    dispatch({
-                        payload: result,
-                        type: states.resolved,
-                    })
-                }
-            },
-            (error) => {
-                if (!canceled) {
-                    dispatch({
-                        payload: error,
-                        type: states.rejected,
-                    })
-                }
-            }
-        )
-
-        return () => {
-            canceled = true
-        }
-    }, inputs)
-
-    return { result, error, loading }
+        execute(...(options.args || []))
+    }, options.args || [])
+    return { result, error, loading: loading ?? true }
 }
