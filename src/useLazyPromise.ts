@@ -36,24 +36,24 @@ function reducer(state, action) {
     }
 }
 
-export type useLazyPromiseOutput<Argument, ResultType> = [
-    (arg?: Argument) => Promise<ResultType>,
+export type useLazyPromiseOutput<Arguments extends any[], ResultType> = [
+    (...args: Arguments) => Promise<ResultType>,
     {
         result?: ResultType
         loading: boolean
         error?: Error
-    }
+    },
 ]
 
-export function useLazyPromise<Argument, ResultType = any>(
-    promise: (x?: Argument) => Promise<ResultType>,
+export function useLazyPromise<Arguments extends any[], ResultType = any>(
+    promise: (...x: Arguments) => Promise<ResultType>,
     {
         cache = false,
         promiseId,
         cacheExpirationSeconds = 120,
         cacheSize = 50,
-    } = {} as CacheaOptions
-): useLazyPromiseOutput<Argument, ResultType> {
+    } = {} as CacheaOptions,
+): useLazyPromiseOutput<Arguments, ResultType> {
     const [{ error, result, loading }, dispatch] = useReducer(reducer, {
         error: undefined,
         result: undefined,
@@ -61,8 +61,8 @@ export function useLazyPromise<Argument, ResultType = any>(
     })
     promiseId = promiseId ?? promise.name
     const execute = useCallback(
-        (arg) => {
-            const hash = hashArg({ promiseId, arg })
+        (...args: Arguments) => {
+            const hash = hashArg({ promiseId, args })
             if (cache) {
                 let hit = memoryCache[hash]
                 if (hit) {
@@ -74,7 +74,7 @@ export function useLazyPromise<Argument, ResultType = any>(
                 }
             }
             dispatch({ type: states.pending })
-            return promise(arg)
+            return promise(...args)
                 .then((result) => {
                     if (cache) {
                         updateCache({
@@ -98,7 +98,7 @@ export function useLazyPromise<Argument, ResultType = any>(
                     throw error
                 })
         },
-        [promise, dispatch]
+        [promise, dispatch],
     )
 
     return [execute, { result, error, loading }]
