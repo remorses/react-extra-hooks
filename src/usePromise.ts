@@ -1,6 +1,10 @@
 import { useEffect, useReducer } from 'react'
-import { useLazyPromise, useLazyPromiseOutput } from './useLazyPromise'
-import { CacheaOptions } from './cache'
+import {
+    useLazyPromise,
+    makeHash,
+    useLazyPromiseOutput,
+} from './useLazyPromise'
+import { CacheaOptions, memoryCache, hashArg } from './cache'
 
 function makeCallback(promise) {
     if (promise.then) {
@@ -16,15 +20,23 @@ export interface usePromiseOutput<ResultType> {
 }
 
 export function usePromise<ResultType = any>(
-    promise: Promise<ResultType> | ((...args: any) => Promise<ResultType>),
+    promise: (...args: any) => Promise<ResultType>,
     options: CacheaOptions & { args?: any[] } = {},
 ): usePromiseOutput<ResultType> {
-    const [execute, { result, error, loading=true }] = useLazyPromise(
-        makeCallback(promise),
-        options,
-    )
+    const cacheHit = options.cache
+        ? memoryCache[
+              makeHash({
+                  promiseId: options.promiseId ?? promise.name,
+                  args: options.args,
+              })
+          ]
+        : undefined
+    const [
+        execute,
+        { result = cacheHit, error, loading = !cacheHit },
+    ] = useLazyPromise(promise, options)
     useEffect(() => {
         execute(...(options.args || []))
     }, options.args || [])
-    return { result, error, loading: loading ?? true }
+    return { result, error, loading }
 }

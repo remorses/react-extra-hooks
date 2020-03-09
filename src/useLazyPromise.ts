@@ -45,6 +45,10 @@ export type useLazyPromiseOutput<Arguments extends any[], ResultType> = [
     },
 ]
 
+export function makeHash({promiseId, args}) {
+    return hashArg({ promiseId, args })
+}
+
 export function useLazyPromise<Arguments extends any[], ResultType = any>(
     promise: (...x: Arguments) => Promise<ResultType>,
     {
@@ -54,12 +58,12 @@ export function useLazyPromise<Arguments extends any[], ResultType = any>(
         cacheSize = 50,
     } = {} as CacheaOptions,
 ): useLazyPromiseOutput<Arguments, ResultType> {
+    promiseId = promiseId ?? promise.name
     const [{ error, result, loading }, dispatch] = useReducer(reducer, {
         error: undefined,
         result: undefined,
         state: states.pending,
     })
-    promiseId = promiseId ?? promise.name
     const execute = useCallback(
         (...args: Arguments) => {
             const hash = hashArg({ promiseId, args })
