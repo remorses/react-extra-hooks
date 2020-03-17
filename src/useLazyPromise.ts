@@ -74,7 +74,7 @@ export function useLazyPromise<Arguments extends any[], ResultType = any>(
                         payload: hit,
                         type: states.resolved,
                     })
-                    return hit
+                    return Promise.resolve(hit)
                 }
             }
             dispatch({ type: states.pending })
