@@ -1,17 +1,6 @@
-import { useEffect, useReducer } from 'react'
-import {
-    useLazyPromise,
-    makeHash,
-    useLazyPromiseOutput,
-} from './useLazyPromise'
-import { CacheaOptions, memoryCache, hashArg } from './cache'
-
-function makeCallback(promise) {
-    if (promise.then) {
-        return () => promise
-    }
-    return promise
-}
+import { useEffect } from 'react'
+import { CacheaOptions, hashArg, memoryCache } from './cache'
+import { useLazyPromise } from './useLazyPromise'
 
 export interface usePromiseOutput<ResultType> {
     result?: ResultType
@@ -25,7 +14,7 @@ export function usePromise<ResultType = any>(
 ): usePromiseOutput<ResultType> {
     const cacheHit = options.cache
         ? memoryCache[
-              makeHash({
+              hashArg({
                   promiseId: options.promiseId ?? promise.name,
                   args: options.args,
               })

@@ -12,7 +12,7 @@ function reducer(state, action) {
         case states.pending:
             return {
                 error: undefined,
-                result: undefined,
+                result: state.result,
                 loading: true,
             }
 
@@ -44,10 +44,6 @@ export type useLazyPromiseOutput<Arguments extends any[], ResultType> = [
         error?: Error
     },
 ]
-
-export function makeHash({promiseId, args}) {
-    return hashArg({ promiseId, args })
-}
 
 export function useLazyPromise<Arguments extends any[], ResultType = any>(
     promise: (...x: Arguments) => Promise<ResultType>,
