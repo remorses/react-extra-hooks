@@ -75,7 +75,7 @@ const UseLazyPromiseExample = () => {
     )
 }
 
-function usePaginationData() {
+function usePaginationData(fetchSomething) {
     const [page, setPage] = useState(0)
 
     async function loadData(page) {
@@ -93,7 +93,7 @@ function usePaginationData() {
 }
 
 const PaginationExample = () => {
-    const { result, error, loading, setPage, page } = usePaginationData()
+    const { result, error, loading, setPage, page } = usePaginationData(fetchSomething)
 
     if (!result.length) {
         return <>loading</>
