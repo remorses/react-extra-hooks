@@ -93,7 +93,9 @@ function usePaginationData(fetchSomething) {
 }
 
 const PaginationExample = () => {
-    const { result, error, loading, setPage, page } = usePaginationData(fetchSomething)
+    const { result, error, loading, setPage, page } = usePaginationData(
+        fetchSomething,
+    )
 
     if (!result.length) {
         return <>loading</>
