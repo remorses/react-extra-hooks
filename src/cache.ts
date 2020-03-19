@@ -13,6 +13,10 @@ const win = getWindow()
 win[reactExtraHooksCacheKey] = win[reactExtraHooksCacheKey] || {}
 export let memoryCache = win[reactExtraHooksCacheKey]
 
+export const clearMemoryCache = () => {
+    win[reactExtraHooksCacheKey] = {}
+}
+
 export function hashArg(arg) {
     return JSON.stringify(sortObject(arg))
 }
@@ -46,6 +50,6 @@ export function updateCache({
             delete memoryCache[hash]
         },
         cacheExpirationSeconds * 1000,
-        hash
+        hash,
     )
 }

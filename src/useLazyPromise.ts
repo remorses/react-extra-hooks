@@ -1,5 +1,5 @@
 import { useCallback, useReducer } from 'react'
-import { hashArg, memoryCache, updateCache, CacheaOptions } from './cache'
+import { hashArg, memoryCache, updateCache, CacheaOptions, clearMemoryCache } from './cache'
 
 const states = {
     pending: 'pending',
@@ -43,6 +43,7 @@ export type useLazyPromiseOutput<Arguments extends any[], ResultType> = [
         loading: boolean
         error?: Error
     },
+    () => void
 ]
 
 export function useLazyPromise<Arguments extends any[], ResultType = any>(
@@ -100,6 +101,6 @@ export function useLazyPromise<Arguments extends any[], ResultType = any>(
         },
         [promise, dispatch],
     )
-
-    return [execute, { result, error, loading }]
+    const invalidate = clearMemoryCache // TODO clear cache only for this promise id
+    return [execute, { result, error, loading }, invalidate]
 }
