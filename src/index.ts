@@ -24,7 +24,7 @@ export function useRunWhenDepsReady({
     }, deps)
 }
 
-export function useInterval({ time, func, args = [] }) {
+export function useInterval({ time=3000, func, args = [] }) {
     useEffect(() => {
         let id = setInterval(() => {
             func(...args)
