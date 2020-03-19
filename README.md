@@ -175,3 +175,74 @@ async function fetchSomething({ page }) {
         .map((x) => x.toString())
 }
 ```
+
+## Pagination with cursor
+
+```tsx
+const ItemsList = ({}) => {
+    const [after, setAfter] = useState(undefined)
+
+    const getUserItems = useCallback(
+        async (after): Promise<GetUserItemsQuery['Items']> => {
+            const uid = getUid()
+            const res = await sdk.GetUserItems({
+                first: 3,
+                after: after,
+            })
+            const newItems = res?.Items || ({} as any)
+            return {
+                ...newItems,
+                nodes: [...(Items?.nodes || []), ...(newItems?.nodes || [])],
+            }
+        },
+        [after],
+    )
+
+    const { result: Items, loading, error } = usePromise(getUserItems, {
+        cache: true,
+        args: [after],
+    })
+
+    const hasItems = !loading && Items?.nodes?.length
+
+    if (!Items && loading) {
+        return (
+            <Center>
+                <Spinner />
+            </Center>
+        )
+    }
+    if (error) {
+        return (
+            <Center>
+                <ErrorMessage msg={error?.message} />
+            </Center>
+        )
+    }
+    if (!hasItems) {
+        return (
+            <Col align='center' justify='center' opacity={0.8} h='100%'>
+                <NextLink href='/new'>
+                    <Button>Create your first Item</Button>
+                </NextLink>
+            </Col>
+        )
+    }
+    return (
+        <Stack spacing={6}>
+            {Items?.nodes?.map((item, i) => (
+                <ItemCard key={i} data={item} />
+            ))}
+            {hasItems && Items?.pageInfo?.hasNextPage && (
+                <Button
+                    isLoading={loading}
+                    isDisabled={loading}
+                    onClick={(e) => setAfter(Items?.pageInfo?.endCursor)}
+                >
+                    Load More
+                </Button>
+            )}
+        </Stack>
+    )
+}
+```
