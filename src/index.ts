@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 export { usePromise, usePromiseOutput } from './usePromise'
 export { useLazyPromise, useLazyPromiseOutput } from './useLazyPromise'
@@ -24,11 +24,23 @@ export function useRunWhenDepsReady({
     }, deps)
 }
 
-export function useInterval({ time=3000, func, args = [] as any[] }) {
+export function useInterval({ time = 3000, func, args = [] as any[] }) {
     useEffect(() => {
-        let id = setInterval((args) => {
-            func(...args)
-        }, time, args)
+        let id = setInterval(
+            (args) => {
+                func(...args)
+            },
+            time,
+            args,
+        )
         return () => clearInterval(id)
     }, args)
+}
+
+export function useRenderNumber() {
+    const ref = useRef(0)
+    useEffect(() => {
+        ref.current += 1
+    })
+    return ref.current
 }

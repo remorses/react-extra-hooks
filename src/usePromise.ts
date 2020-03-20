@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { CacheaOptions, getFromCache } from './cache'
 import { useLazyPromise } from './useLazyPromise'
+import { useRenderNumber } from '.'
 
 export interface usePromiseOutput<ResultType> {
     result?: ResultType
@@ -12,7 +13,11 @@ export interface UsePromiseOptions<ResultType> {
     args?: any[]
     polling?: {
         interval: number
-        then?: (result: ResultType, stop?: () => void) => any
+        then?: (arg: {
+            result: ResultType
+            stop: () => void
+            previous: ResultType
+        }) => any
     }
 }
 
@@ -26,16 +31,16 @@ export function usePromise<ResultType = any>(
               args: options.args,
           })
         : undefined
-    const [continuePolling, setContinuePolling] = useState(
-        !!options.polling?.interval,
-    )
+    const continuePolling = useRef(!!options.polling?.interval)
     const [
         execute,
         { result = cacheHit, error, loading = !cacheHit },
         invalidate,
     ] = useLazyPromise(promise, options)
+    const renderNumber = useRenderNumber()
     const isPromiseNull = !promise
-    const deps = [isPromiseNull, ...(options?.args || [])] || [isPromiseNull]
+    const defaultDeps = [isPromiseNull, result]
+    const args = options?.args || []
     useEffect(() => {
         if (!promise) {
             return
@@ -45,31 +50,30 @@ export function usePromise<ResultType = any>(
             execute(...args).catch(identity)
             return
         }
-        let id = setInterval(
-            (args) => {
-                if (!continuePolling) {
-                    return
-                }
-                invalidate()
-                execute(...args)
-                    .then((result) => [
-                        result,
-                        () => {
-                            clearInterval(id)
-                            setContinuePolling(false)
-                        },
-                    ])
-                    .then(
-                        (args: [ResultType, any]) =>
-                            options?.polling?.then?.(...args) || identity,
-                    )
-                    .catch(identity)
-            },
-            options?.polling?.interval,
-            args,
-        )
+        const poll = (args) => {
+            if (!continuePolling.current) {
+                return
+            }
+            const previous = result
+            invalidate()
+            execute(...args)
+                .then((result) => ({
+                    result,
+                    stop: () => {
+                        clearInterval(id)
+                        continuePolling.current = false
+                    },
+                    previous,
+                }))
+                .then((args) => options?.polling?.then?.(args) || identity)
+                .catch(identity)
+        }
+        let id = setInterval(poll, options?.polling?.interval, args)
+        if (renderNumber === 0) {
+            poll(args)
+        }
         return () => clearInterval(id)
-    }, deps)
+    }, [...defaultDeps, ...args])
     return { result, error, loading }
 }
 

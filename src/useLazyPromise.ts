@@ -69,7 +69,7 @@ export function useLazyPromise<Arguments extends any[], ResultType = any>(
     useEffect(() => {
         if (promise && cache && !promiseId) {
             console.error(
-                'ERROR useLazyPromise should receive either a promiseId or a name function!\ncache will not be hashed correctly',
+                'ERROR react-extra-hooks useLazyPromise should receive either a promiseId or a name function!\ncache will not be hashed correctly',
             )
             console.log('for function ' + promise.toString())
         }

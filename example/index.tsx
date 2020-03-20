@@ -87,19 +87,24 @@ const UseLazyPromiseExample = () => {
     )
 }
 
+let count = 0
+
 const PollingExample = () => {
     const poller = async () => {
-        await sleep(1000)
-        return 'polled'
+        // await sleep(1000)
+        count += 1
+        return 'polled ' + count
     }
     const { result, loading, error } = usePromise(poller, {
         cache: true,
         polling: {
-            interval: 2000,
-            // then: (result, stop) => {
-            //     console.log(result)
-            //     stop()
-            // },
+            interval: 700,
+            then: ({ result, stop, previous }) => {
+                console.log({ result, previous })
+                if (count > 3) {
+                    stop()
+                }
+            },
         },
     })
     if (loading) {
@@ -112,7 +117,6 @@ const PollingExample = () => {
     return (
         <div>
             <code>
-                <p>polling example</p>
                 <div>{result}</div>
             </code>
         </div>
@@ -203,13 +207,13 @@ const App = () => {
                 <UseLazyPromiseExample />
             </Cornice>
             <Cornice>
-                <PaginationExample />
-            </Cornice>
-            <Cornice>
                 <PollingExample />
             </Cornice>
             <Cornice>
                 <UseDelayedExample />
+            </Cornice>
+            <Cornice>
+                <PaginationExample />
             </Cornice>
         </>
     )
