@@ -119,6 +119,16 @@ const UseLazyPromiseExample = () => {
 }
 ```
 
+## Example with delayed argument necessary for the promise
+
+```tsx
+const { query } = useRouter() // null on first render
+const { result, loading, error } = usePromise(query ? asyncFunction : null, {
+    cache: true,
+    args: [query],
+})
+```
+
 ## Usage with pagination
 
 ```tsx
@@ -247,8 +257,4 @@ const ItemsList = ({}) => {
 }
 ```
 
-TODO add polling parameter to use promise, 
-TODO split the cache in layers, first promiseid then args
-TODO if result is in cache, should not display the loading true
 TODO add support for suspense
-TODO decide id execute should throw or not

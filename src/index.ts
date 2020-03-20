@@ -16,7 +16,7 @@ export function useRunWhenDepsReady({
         const falsy = deps.filter((x) => x === undefinedIs)
         if (falsy.length) {
             console.log(
-                `${func.name} still waiting for ${falsy.length} dependencies, ${falsy}`,
+                `${func?.name} still waiting for ${falsy.length} dependencies, ${falsy}`,
             )
             return
         }

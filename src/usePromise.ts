@@ -22,7 +22,7 @@ export function usePromise<ResultType = any>(
 ): usePromiseOutput<ResultType> {
     const cacheHit = options.cache
         ? getFromCache({
-              promiseId: options.promiseId ?? promise.name,
+              promiseId: options.promiseId ?? promise?.name,
               args: options.args,
           })
         : undefined

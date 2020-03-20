@@ -18,6 +18,11 @@ async function gg(f) {
         x: f,
     }
 }
+const makeAsyncIdentity = (t) => async (f) => {
+    console.log(f)
+    await sleep(t)
+    return f
+}
 
 const UsePromiseExample = () => {
     const [num, setNum] = useState(0)
@@ -25,18 +30,29 @@ const UsePromiseExample = () => {
         const id = setInterval(() => setNum((x) => x + 1), 2000)
         return () => clearInterval(id)
     }, [])
-    const { result } = usePromise(gg, {
-        cache: true,
-        args: ['2'],
-    })
     const { result: r2, loading: r2loading, error } = usePromise(gg, {
         cache: true,
         args: [num],
     })
     return (
         <div>
-            <h1>{result?.x}</h1>
             <h1>{r2loading ? 'loading' : r2?.x}</h1>
+        </div>
+    )
+}
+
+const UseDelayedExample = () => {
+    const query = useDelayedResource()
+    const { result: r2, loading: r2loading, error } = usePromise(
+        query ? makeAsyncIdentity(3000) : null,
+        {
+            cache: true,
+            args: [query],
+        },
+    )
+    return (
+        <div>
+            <h4>{r2loading ? 'loading' : r2}</h4>
         </div>
     )
 }
@@ -101,6 +117,16 @@ const PollingExample = () => {
             </code>
         </div>
     )
+}
+
+function useDelayedResource() {
+    const [res, setRes] = useState(null)
+    useEffect(() => {
+        setTimeout(() => {
+            setRes('ready🥳')
+        }, 700)
+    }, [])
+    return res
 }
 
 function usePaginationData(fetchSomething) {
@@ -181,6 +207,9 @@ const App = () => {
             </Cornice>
             <Cornice>
                 <PollingExample />
+            </Cornice>
+            <Cornice>
+                <UseDelayedExample />
             </Cornice>
         </>
     )
