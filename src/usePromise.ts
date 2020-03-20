@@ -69,7 +69,11 @@ export function usePromise<ResultType = any>(
                 .catch(identity)
         }
         let id = setInterval(poll, options?.polling?.interval, args)
-        if (renderNumber === 0) {
+        if (renderNumber.current === 0) {
+            if (isPromiseNull) {
+                renderNumber.current = 0
+                return
+            }
             poll(args)
         }
         return () => clearInterval(id)

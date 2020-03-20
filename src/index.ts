@@ -42,5 +42,5 @@ export function useRenderNumber() {
     useEffect(() => {
         ref.current += 1
     })
-    return ref.current
+    return ref
 }
