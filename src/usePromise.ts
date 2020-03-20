@@ -41,13 +41,15 @@ export function usePromise<ResultType = any>(
         }
         const args = options.args || []
         if (!options?.polling?.interval) {
-            execute(...args)
+            execute(...args).catch(identity)
             return
         }
         let id = setInterval(
             (args) => {
                 invalidate()
-                execute(...args).then(options?.polling?.then || identity)
+                execute(...args)
+                    .then(options?.polling?.then || identity)
+                    .catch(identity)
             },
             options?.polling?.interval,
             args,

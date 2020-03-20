@@ -108,7 +108,7 @@ export function useLazyPromise<Arguments extends any[], ResultType = any>(
                         payload: error,
                         type: states.rejected,
                     })
-                    // throw error
+                    throw error
                 })
         },
         [!promise, dispatch],
