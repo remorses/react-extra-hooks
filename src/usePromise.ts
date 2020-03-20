@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { CacheaOptions, getFromCache } from './cache'
 import { useLazyPromise } from './useLazyPromise'
 
@@ -26,6 +26,9 @@ export function usePromise<ResultType = any>(
               args: options.args,
           })
         : undefined
+    const [continuePolling, setContinuePolling] = useState(
+        !!options.polling?.interval,
+    )
     const [
         execute,
         { result = cacheHit, error, loading = !cacheHit },
@@ -44,8 +47,18 @@ export function usePromise<ResultType = any>(
         }
         let id = setInterval(
             (args) => {
+                if (!continuePolling) {
+                    return
+                }
                 invalidate()
                 execute(...args)
+                    .then((result) => ({
+                        result,
+                        stop: () => {
+                            clearInterval(id)
+                            setContinuePolling(false)
+                        },
+                    }))
                     .then(options?.polling?.then || identity)
                     .catch(identity)
             },

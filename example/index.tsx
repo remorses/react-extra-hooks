@@ -99,7 +99,10 @@ const PollingExample = () => {
             cache: true,
             polling: {
                 interval: 2000,
-                then: console.log,
+                then: ({ result, stop }) => {
+                    console.log(result)
+                    stop()
+                },
             },
         },
     )
