@@ -37,7 +37,7 @@ export function usePromise<ResultType = any>(
         { result = cacheHit, error, loading = !cacheHit },
         invalidate,
     ] = useLazyPromise(promise, options)
-    const renderNumber = useRenderNumber()
+    const renderNumber = useRef(0)
     const isPromiseNull = !promise
     const args = options?.args || []
     useEffect(() => {
@@ -68,13 +68,14 @@ export function usePromise<ResultType = any>(
                 .catch(identity)
         }
         let id = setInterval(poll, options?.polling?.interval, args)
+        console.log({ renderNumber: renderNumber.current })
         if (renderNumber.current === 0) {
             if (isPromiseNull) {
-                renderNumber.current -= 1
                 return
             }
             poll(args)
         }
+        renderNumber.current += 1
         return () => clearInterval(id)
     }, [isPromiseNull, result, ...args])
     return { result, error, loading }

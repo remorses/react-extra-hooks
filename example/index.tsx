@@ -90,15 +90,20 @@ const UseLazyPromiseExample = () => {
 let count = 0
 
 const PollingExample = () => {
-    const poller = async () => {
+    const poller = async (x) => {
         // await sleep(1000)
+        if (!x) {
+            alert('x is null')
+        }
         count += 1
         return 'polled ' + count
     }
-    const { result, loading, error } = usePromise(poller, {
+    const x = useDelayedResource()
+    const { result, loading, error } = usePromise(x && poller, {
         cache: true,
+        args: [x],
         polling: {
-            interval: 700,
+            interval: 2000,
             then: ({ result, stop, previous }) => {
                 console.log({ result, previous })
                 if (count > 3) {
