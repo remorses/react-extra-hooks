@@ -39,7 +39,6 @@ export function usePromise<ResultType = any>(
     ] = useLazyPromise(promise, options)
     const renderNumber = useRenderNumber()
     const isPromiseNull = !promise
-    const defaultDeps = [isPromiseNull, result]
     const args = options?.args || []
     useEffect(() => {
         if (!promise) {
@@ -71,13 +70,13 @@ export function usePromise<ResultType = any>(
         let id = setInterval(poll, options?.polling?.interval, args)
         if (renderNumber.current === 0) {
             if (isPromiseNull) {
-                renderNumber.current = 0
+                renderNumber.current -= 1
                 return
             }
             poll(args)
         }
         return () => clearInterval(id)
-    }, [...defaultDeps, ...args])
+    }, [isPromiseNull, result, ...args])
     return { result, error, loading }
 }
 
