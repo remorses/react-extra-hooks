@@ -9,7 +9,7 @@ export interface usePromiseOutput<ResultType> {
 }
 
 export function usePromise<ResultType = any>(
-    promise: (...args: any) => Promise<ResultType>,
+    promise: (...args: any) => Promise<ResultType> | null | undefined,
     options: CacheaOptions & { args?: any[] } = {},
 ): usePromiseOutput<ResultType> {
     const cacheHit = options.cache
@@ -25,7 +25,10 @@ export function usePromise<ResultType = any>(
         { result = cacheHit, error, loading = !cacheHit },
     ] = useLazyPromise(promise, options)
     useEffect(() => {
+        if (!promise) {
+            return
+        }
         execute(...(options.args || []))
-    }, options.args || [])
+    }, [execute, ...options.args] || [execute])
     return { result, error, loading }
 }

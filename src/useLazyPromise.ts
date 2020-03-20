@@ -1,5 +1,11 @@
 import { useCallback, useReducer } from 'react'
-import { hashArg, memoryCache, updateCache, CacheaOptions, clearMemoryCache } from './cache'
+import {
+    hashArg,
+    memoryCache,
+    updateCache,
+    CacheaOptions,
+    clearMemoryCache,
+} from './cache'
 
 const states = {
     pending: 'pending',
@@ -43,11 +49,11 @@ export type useLazyPromiseOutput<Arguments extends any[], ResultType> = [
         loading: boolean
         error?: Error
     },
-    () => void
+    () => void,
 ]
 
 export function useLazyPromise<Arguments extends any[], ResultType = any>(
-    promise: (...x: Arguments) => Promise<ResultType>,
+    promise: (...x: Arguments) => Promise<ResultType> | null | undefined,
     {
         cache = false,
         promiseId,
@@ -63,6 +69,11 @@ export function useLazyPromise<Arguments extends any[], ResultType = any>(
     })
     const execute = useCallback(
         (...args: Arguments) => {
+            if (!promise) {
+                throw new Error(
+                    `promise is null or undefined, cannot execute with args '${args}'`,
+                )
+            }
             const hash = hashArg({ promiseId, args })
             if (cache) {
                 let hit = memoryCache[hash]

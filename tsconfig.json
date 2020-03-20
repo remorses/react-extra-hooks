@@ -10,7 +10,7 @@
         ],
         "declaration": true,
         "outDir": "dist",
-        "strict": true,
+        "strict": false,
         "esModuleInterop": true,
         "noImplicitAny": false,
         "allowSyntheticDefaultImports": true,
