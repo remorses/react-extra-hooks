@@ -133,7 +133,6 @@ function usePaginationData(fetchSomething) {
     const [page, setPage] = useState(0)
 
     async function loadData(page) {
-        console.log({ result })
         const items = await fetchSomething({ page })
         return [...result, ...items]
     }
@@ -189,7 +188,7 @@ const PaginationExample = () => {
 async function fetchSomething({ page }) {
     await sleep(1000)
     return Array(10)
-        .fill(page + 10)
+        .fill(page * 10)
         .map((x, i) => x + i)
         .map((x) => x.toString())
 }
