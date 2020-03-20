@@ -78,6 +78,7 @@ export function useLazyPromise<Arguments extends any[], ResultType = any>(
             if (cache) {
                 let hit = memoryCache[hash]
                 if (hit) {
+                    // console.log('cache hit for ' + JSON.stringify(hit))
                     dispatch({
                         payload: hit,
                         type: states.resolved,
@@ -110,7 +111,7 @@ export function useLazyPromise<Arguments extends any[], ResultType = any>(
                     // throw error
                 })
         },
-        [promise, dispatch],
+        [!promise, dispatch],
     )
     const invalidate = clearMemoryCache // TODO clear cache only for this promise id
     return [execute, { result, error, loading }, invalidate]

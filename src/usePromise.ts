@@ -8,9 +8,17 @@ export interface usePromiseOutput<ResultType> {
     error?: Error
 }
 
+export interface UsePromiseOptions {
+    args?: any[]
+    polling?: {
+        interval: number
+        then?: (result: any) => void
+    }
+}
+
 export function usePromise<ResultType = any>(
     promise: (...args: any) => Promise<ResultType> | null | undefined,
-    options: CacheaOptions & { args?: any[] } = {},
+    options: CacheaOptions & UsePromiseOptions = {},
 ): usePromiseOutput<ResultType> {
     const cacheHit = options.cache
         ? memoryCache[
@@ -23,12 +31,30 @@ export function usePromise<ResultType = any>(
     const [
         execute,
         { result = cacheHit, error, loading = !cacheHit },
+        invalidate,
     ] = useLazyPromise(promise, options)
+    const isPromiseNull = !promise
+    const deps = [isPromiseNull, ...(options?.args || [])] || [isPromiseNull]
     useEffect(() => {
         if (!promise) {
             return
         }
-        execute(...(options.args || []))
-    }, [execute, ...options.args] || [execute])
+        const args = options.args || []
+        if (!options?.polling?.interval) {
+            execute(...args)
+            return
+        }
+        let id = setInterval(
+            (args) => {
+                invalidate()
+                execute(...args).then(options?.polling?.then || identity)
+            },
+            options?.polling?.interval,
+            args,
+        )
+        return () => clearInterval(id)
+    }, deps)
     return { result, error, loading }
 }
+
+const identity = (x) => x

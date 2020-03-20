@@ -22,9 +22,10 @@ async function gg(f) {
 const UsePromiseExample = () => {
     const [num, setNum] = useState(0)
     useEffect(() => {
-        setInterval(() => setNum((x) => x + 1), 2000)
+        const id = setInterval(() => setNum((x) => x + 1), 2000)
+        return () => clearInterval(id)
     }, [])
-    const { result } = usePromise((f) => gg(f), {
+    const { result } = usePromise(gg, {
         cache: true,
         args: ['2'],
     })
@@ -43,7 +44,7 @@ const UsePromiseExample = () => {
 async function effect(n: string) {
     await sleep(1000)
     // throw Error('xxx')
-    alert('executed with n=' + n)
+    console.log('executed with n=' + n)
     return {
         x: n,
     }
@@ -67,6 +68,36 @@ const UseLazyPromiseExample = () => {
             <button onClick={() => execute(arg)}>execute promise</button>
             <code>
                 <div>{result?.x}</div>
+            </code>
+        </div>
+    )
+}
+
+const PollingExample = () => {
+    const { result, loading, error } = usePromise(
+        async () => {
+            await sleep(1000)
+            return 'polled'
+        },
+        {
+            cache: true,
+            polling: {
+                interval: 2000,
+                then: console.log,
+            },
+        },
+    )
+    if (loading) {
+        return <>loading</>
+    }
+    if (error) {
+        return <div>{error.message}</div>
+    }
+
+    return (
+        <div>
+            <code>
+                <div>{result}</div>
             </code>
         </div>
     )
@@ -139,13 +170,25 @@ async function fetchSomething({ page }) {
 const App = () => {
     return (
         <>
-            <UsePromiseExample />
-            
-            {/* <UseLazyPromiseExample /> */}
-            <div style={{ padding: '30px', border: '1px solid red' }}>
+            <Cornice>
+                <UsePromiseExample />
+            </Cornice>
+            <Cornice>
+                <UseLazyPromiseExample />
+            </Cornice>
+            <Cornice>
                 <PaginationExample />
-            </div>
+            </Cornice>
+            <Cornice>
+                <PollingExample />
+            </Cornice>
         </>
+    )
+}
+
+const Cornice = (props) => {
+    return (
+        <div style={{ padding: '30px', border: '1px solid red' }} {...props} />
     )
 }
 

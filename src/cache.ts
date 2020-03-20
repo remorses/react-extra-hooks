@@ -14,6 +14,7 @@ win[reactExtraHooksCacheKey] = win[reactExtraHooksCacheKey] || {}
 export let memoryCache = win[reactExtraHooksCacheKey]
 
 export const clearMemoryCache = () => {
+    memoryCache = {}
     win[reactExtraHooksCacheKey] = {}
 }
 
