@@ -13,7 +13,7 @@ async function pp() {
 }
 async function gg(f) {
     console.log(f)
-    await sleep(100)
+    await sleep(600)
     return {
         x: f,
     }
@@ -22,23 +22,20 @@ async function gg(f) {
 const UsePromiseExample = () => {
     const [num, setNum] = useState(0)
     useEffect(() => {
-        setInterval(() => setNum((x) => x + 1), 3000)
+        setInterval(() => setNum((x) => x + 1), 2000)
     }, [])
-    const { result, loading, error } = usePromise(gg, {
-        cache: true,
-        args: [num],
-    })
-    const { result: r2 } = usePromise((f) => gg(f), {
+    const { result } = usePromise((f) => gg(f), {
         cache: true,
         args: ['2'],
     })
-    if (loading) {
-        return <>loading</>
-    }
+    const { result: r2, loading: r2loading, error } = usePromise(gg, {
+        cache: true,
+        args: [num],
+    })
     return (
         <div>
-            <h1>{r2?.x}</h1>
             <h1>{result?.x}</h1>
+            <h1>{r2loading ? 'loading' : r2?.x}</h1>
         </div>
     )
 }
@@ -142,7 +139,8 @@ async function fetchSomething({ page }) {
 const App = () => {
     return (
         <>
-            {/* <UsePromiseExample /> */}
+            <UsePromiseExample />
+            
             {/* <UseLazyPromiseExample /> */}
             <div style={{ padding: '30px', border: '1px solid red' }}>
                 <PaginationExample />
