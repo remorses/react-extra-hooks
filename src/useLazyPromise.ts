@@ -119,7 +119,7 @@ export function useLazyPromise<Arguments extends any[], ResultType = any>(
                     throw error
                 })
         },
-        [!promise, dispatch],
+        [!promise, dispatch, result],
     )
     const invalidate = () =>
         clearMemoryCache({
