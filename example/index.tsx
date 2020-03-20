@@ -145,7 +145,7 @@ const PaginationExample = () => {
                     }}
                 >
                     {result.map((x) => (
-                        <div>{x}</div>
+                        <div key={x}>{x}</div>
                     ))}
                     <button
                         disabled={loading}

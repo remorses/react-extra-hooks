@@ -1,4 +1,4 @@
-import { useCallback, useReducer } from 'react'
+import { useCallback, useReducer, useEffect } from 'react'
 import {
     updateCache,
     CacheaOptions,
@@ -66,6 +66,14 @@ export function useLazyPromise<Arguments extends any[], ResultType = any>(
         result: undefined,
         state: states.pending,
     })
+    useEffect(() => {
+        if (promise && cache && !promiseId) {
+            console.error(
+                'ERROR useLazyPromise should receive either a promiseId or a name function!\ncache will not be hashed correctly',
+            )
+            console.log('for function ' + promise.toString())
+        }
+    }, [promiseId, cache])
     const execute = useCallback(
         (...args: Arguments) => {
             if (!promise) {
@@ -113,6 +121,9 @@ export function useLazyPromise<Arguments extends any[], ResultType = any>(
         },
         [!promise, dispatch],
     )
-    const invalidate = clearMemoryCache // TODO clear cache only for this promise id
+    const invalidate = () =>
+        clearMemoryCache({
+            promiseId,
+        })
     return [execute, { result, error, loading }, invalidate]
 }

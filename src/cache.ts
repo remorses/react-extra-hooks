@@ -13,18 +13,16 @@ const win = getWindow()
 win[reactExtraHooksCacheKey] = win[reactExtraHooksCacheKey] || {}
 let memoryCache = win[reactExtraHooksCacheKey]
 
-export const clearMemoryCache = () => {
-    memoryCache = {}
-    win[reactExtraHooksCacheKey] = {}
+export const clearMemoryCache = ({ promiseId }) => {
+    const hash = hashArg({ promiseId })
+    memoryCache[hash] = {}
+    win[reactExtraHooksCacheKey][hash] = {}
 }
 
 export function getFromCache({ promiseId, args }) {
-    return memoryCache[
-        hashArg({
-            promiseId: promiseId,
-            args: args,
-        })
-    ]
+    const hash = hashArg({ promiseId })
+    const secondHash = hashArg({ args })
+    return memoryCache[hash]?.[secondHash]
 }
 
 function hashArg(arg) {
@@ -48,8 +46,10 @@ export function updateCache({
     if (!result) {
         return
     }
-    const hash = hashArg({ promiseId, args })
-    memoryCache[hash] = result
+    const hash = hashArg({ promiseId })
+    memoryCache[hash] = memoryCache[hash] || {}
+    const secondHash = hashArg({ args })
+    memoryCache[hash][secondHash] = result
     if (
         memoryCache.lastHash &&
         Object.keys(memoryCache).length + 1 > cacheSize
