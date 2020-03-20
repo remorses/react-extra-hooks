@@ -106,7 +106,7 @@ const PollingExample = () => {
             interval: 2000,
             then: ({ result, stop, previous }) => {
                 console.log({ result, previous })
-                if (count > 3) {
+                if (count === 3) {
                     stop()
                 }
             },
