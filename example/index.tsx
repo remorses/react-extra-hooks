@@ -12,14 +12,12 @@ async function pp() {
     }
 }
 async function gg(f) {
-    console.log(f)
     await sleep(600)
     return {
         x: f,
     }
 }
 const makeAsyncIdentity = (t) => async (f) => {
-    console.log(f)
     await sleep(t)
     return f
 }
@@ -90,22 +88,20 @@ const UseLazyPromiseExample = () => {
 }
 
 const PollingExample = () => {
-    const { result, loading, error } = usePromise(
-        async () => {
-            await sleep(1000)
-            return 'polled'
+    const poller = async () => {
+        await sleep(1000)
+        return 'polled'
+    }
+    const { result, loading, error } = usePromise(poller, {
+        cache: true,
+        polling: {
+            interval: 2000,
+            // then: (result, stop) => {
+            //     console.log(result)
+            //     stop()
+            // },
         },
-        {
-            cache: true,
-            polling: {
-                interval: 2000,
-                then: ({ result, stop }) => {
-                    console.log(result)
-                    stop()
-                },
-            },
-        },
-    )
+    })
     if (loading) {
         return <>loading</>
     }
@@ -116,6 +112,7 @@ const PollingExample = () => {
     return (
         <div>
             <code>
+                <p>polling example</p>
                 <div>{result}</div>
             </code>
         </div>
@@ -136,13 +133,14 @@ function usePaginationData(fetchSomething) {
     const [page, setPage] = useState(0)
 
     async function loadData(page) {
+        console.log({ result })
         const items = await fetchSomething({ page })
         return [...result, ...items]
     }
 
     const { result = [], loading, error } = usePromise(loadData, {
         cache: true,
-        cacheExpirationSeconds: 300,
+        cacheExpirationSeconds: 3000000,
         args: [page],
     })
 

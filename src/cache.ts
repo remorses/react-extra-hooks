@@ -15,8 +15,8 @@ let memoryCache = win[reactExtraHooksCacheKey]
 
 export const clearMemoryCache = ({ promiseId }) => {
     const hash = hashArg({ promiseId })
-    memoryCache[hash] = {}
-    win[reactExtraHooksCacheKey][hash] = {}
+    delete memoryCache[hash]
+    delete win[reactExtraHooksCacheKey][hash]
 }
 
 export function getFromCache({ promiseId, args }) {

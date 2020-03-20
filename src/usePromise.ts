@@ -8,17 +8,17 @@ export interface usePromiseOutput<ResultType> {
     error?: Error
 }
 
-export interface UsePromiseOptions {
+export interface UsePromiseOptions<ResultType> {
     args?: any[]
     polling?: {
         interval: number
-        then?: (result: any) => void
+        then?: (result: ResultType, stop?: () => void) => any
     }
 }
 
 export function usePromise<ResultType = any>(
     promise: (...args: any) => Promise<ResultType> | null | undefined,
-    options: CacheaOptions & UsePromiseOptions = {},
+    options: CacheaOptions & UsePromiseOptions<ResultType> = {},
 ): usePromiseOutput<ResultType> {
     const cacheHit = options.cache
         ? getFromCache({
@@ -52,14 +52,17 @@ export function usePromise<ResultType = any>(
                 }
                 invalidate()
                 execute(...args)
-                    .then((result) => ({
+                    .then((result) => [
                         result,
-                        stop: () => {
+                        () => {
                             clearInterval(id)
                             setContinuePolling(false)
                         },
-                    }))
-                    .then(options?.polling?.then || identity)
+                    ])
+                    .then(
+                        (args: [ResultType, any]) =>
+                            options?.polling?.then?.(...args) || identity,
+                    )
                     .catch(identity)
             },
             options?.polling?.interval,
