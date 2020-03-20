@@ -11,14 +11,23 @@ function getWindow() {
 
 const win = getWindow()
 win[reactExtraHooksCacheKey] = win[reactExtraHooksCacheKey] || {}
-export let memoryCache = win[reactExtraHooksCacheKey]
+let memoryCache = win[reactExtraHooksCacheKey]
 
 export const clearMemoryCache = () => {
     memoryCache = {}
     win[reactExtraHooksCacheKey] = {}
 }
 
-export function hashArg(arg) {
+export function getFromCache({ promiseId, args }) {
+    return memoryCache[
+        hashArg({
+            promiseId: promiseId,
+            args: args,
+        })
+    ]
+}
+
+function hashArg(arg) {
     return JSON.stringify(sortObject(arg))
 }
 
@@ -30,7 +39,8 @@ export interface CacheaOptions {
 }
 
 export function updateCache({
-    hash,
+    promiseId,
+    args,
     result,
     cacheSize,
     cacheExpirationSeconds,
@@ -38,6 +48,7 @@ export function updateCache({
     if (!result) {
         return
     }
+    const hash = hashArg({ promiseId, args })
     memoryCache[hash] = result
     if (
         memoryCache.lastHash &&

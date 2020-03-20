@@ -1,10 +1,9 @@
 import { useCallback, useReducer } from 'react'
 import {
-    hashArg,
-    memoryCache,
     updateCache,
     CacheaOptions,
     clearMemoryCache,
+    getFromCache,
 } from './cache'
 
 const states = {
@@ -74,9 +73,9 @@ export function useLazyPromise<Arguments extends any[], ResultType = any>(
                     `promise is null or undefined, cannot execute with args '${args}'`,
                 )
             }
-            const hash = hashArg({ promiseId, args })
+
             if (cache) {
-                let hit = memoryCache[hash]
+                let hit = getFromCache({ promiseId, args })
                 if (hit) {
                     // console.log('cache hit for ' + JSON.stringify(hit))
                     dispatch({
@@ -91,7 +90,8 @@ export function useLazyPromise<Arguments extends any[], ResultType = any>(
                 .then((result) => {
                     if (cache) {
                         updateCache({
-                            hash,
+                            promiseId,
+                            args,
                             cacheExpirationSeconds,
                             cacheSize,
                             result,

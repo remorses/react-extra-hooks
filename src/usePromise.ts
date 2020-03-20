@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { CacheaOptions, hashArg, memoryCache } from './cache'
+import { CacheaOptions, getFromCache } from './cache'
 import { useLazyPromise } from './useLazyPromise'
 
 export interface usePromiseOutput<ResultType> {
@@ -21,12 +21,10 @@ export function usePromise<ResultType = any>(
     options: CacheaOptions & UsePromiseOptions = {},
 ): usePromiseOutput<ResultType> {
     const cacheHit = options.cache
-        ? memoryCache[
-              hashArg({
-                  promiseId: options.promiseId ?? promise.name,
-                  args: options.args,
-              })
-          ]
+        ? getFromCache({
+              promiseId: options.promiseId ?? promise.name,
+              args: options.args,
+          })
         : undefined
     const [
         execute,
