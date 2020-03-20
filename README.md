@@ -246,3 +246,10 @@ const ItemsList = ({}) => {
     )
 }
 ```
+
+TODO add polling parameter to use promise, 
+TODO if promise is null dont execute anything
+TODO split the cache in layers, first promiseid then args
+TODO if result is in cache, should not display the loading true
+TODO add support for suspense
+TODO decide id execute should throw or not
