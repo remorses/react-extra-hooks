@@ -25,7 +25,7 @@ export function getFromCache({ promiseId, args }) {
     return memoryCache[hash]?.[secondHash]
 }
 
-function hashArg(arg) {
+export function hashArg(arg) {
     return JSON.stringify(sortObject(arg))
 }
 
@@ -34,6 +34,7 @@ export interface CacheaOptions {
     promiseId?: string // defaults to the name of the function passed tp useLazyPromise
     cacheExpirationSeconds?: number
     cacheSize?: number
+    shallow?: boolean
 }
 
 export function updateCache({

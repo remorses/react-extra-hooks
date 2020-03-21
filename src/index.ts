@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-
+import isEqual from 'lodash.isequal'
 export { usePromise, usePromiseOutput } from './usePromise'
 export { useLazyPromise, useLazyPromiseOutput } from './useLazyPromise'
 export { useDebounce } from './useDebounce'
@@ -43,4 +43,24 @@ export function useRenderNumber() {
         ref.current += 1
     })
     return ref
+}
+
+export const usePrevious = (value) => {
+    const ref = useRef()
+    useEffect(() => {
+        ref.current = value
+    })
+    return ref.current
+}
+
+export function useDeepEffect(func, deps) {
+    const myPreviousState = usePrevious(deps)
+    useEffect(() => {
+        if (!myPreviousState) {
+            func()
+        }
+        if (!isEqual(myPreviousState, deps)) {
+            func()
+        }
+    }, deps)
 }

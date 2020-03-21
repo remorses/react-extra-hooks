@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
-import { CacheaOptions, getFromCache } from './cache'
+import { CacheaOptions, getFromCache, hashArg } from './cache'
 import { useLazyPromise } from './useLazyPromise'
-import { useRenderNumber } from '.'
+import { useRenderNumber, useDeepEffect } from '.'
 
 export interface usePromiseOutput<ResultType> {
     result?: ResultType
@@ -39,16 +39,17 @@ export function usePromise<ResultType = any>(
 
     const isPromiseNull = !promise
     const args = options?.args || []
-
+    const argsDeps = options.shallow ? args : [hashArg(args)]
     useEffect(() => {
         if (isPromiseNull) {
             return
         }
         execute(...args).catch(identity)
-    }, [isPromiseNull, ...args])
+    }, [isPromiseNull, ...argsDeps])
 
     usePolling({
         enabled: options?.polling?.interval,
+        argsDeps,
         args,
         execute: (args) => {
             invalidate()
@@ -68,11 +69,13 @@ function usePolling({
     result,
     enabled,
     interval,
+    argsDeps,
     args,
     then,
     isPromiseNull,
 }) {
     const continuePolling = useRef(enabled)
+
     useEffect(() => {
         if (isPromiseNull) {
             return
@@ -99,7 +102,7 @@ function usePolling({
         }
         let id = setInterval(poll, interval, args)
         return () => clearInterval(id)
-    }, [isPromiseNull, result, ...args])
+    }, [isPromiseNull, result, ...argsDeps])
 }
 
 const identity = (x) => x
