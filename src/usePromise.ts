@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { CacheaOptions, getFromCache, hashArg } from './cache'
+import { CacheOptions, getFromCache, hashArg } from './cache'
 import { useLazyPromise } from './useLazyPromise'
 import { useRenderNumber, useDeepEffect } from '.'
 
@@ -23,7 +23,7 @@ export interface UsePromiseOptions<ResultType> {
 
 export function usePromise<ResultType = any>(
     promise: (...args: any) => Promise<ResultType> | null | undefined,
-    options: CacheaOptions & UsePromiseOptions<ResultType> = {},
+    options: CacheOptions & UsePromiseOptions<ResultType> = {},
 ): usePromiseOutput<ResultType> {
     // options defaults
     options.promiseId = options.promiseId ?? promise?.name

@@ -1,7 +1,7 @@
 import { useCallback, useReducer, useEffect, useMemo } from 'react'
 import {
     updateCache,
-    CacheaOptions,
+    CacheOptions,
     clearMemoryCache,
     getFromCache,
 } from './cache'
@@ -57,7 +57,7 @@ interface MaybeCachedPromise<T = any> extends Promise<T> {
 
 export function useLazyPromise<Arguments extends any[], ResultType = any>(
     promise: (...x: Arguments) => Promise<ResultType> | null | undefined,
-    cacheOptions = {} as CacheaOptions,
+    cacheOptions = {} as CacheOptions,
 ): useLazyPromiseOutput<Arguments, ResultType> {
     cacheOptions.promiseId = cacheOptions.promiseId || promise?.name
     const [{ error, result, loading }, dispatch] = useReducer(reducer, {
@@ -90,7 +90,7 @@ function makeExecute({
     dispatch,
 }: {
     promise: Function
-    cacheOptions: CacheaOptions
+    cacheOptions: CacheOptions
     dispatch: Function
 }) {
     return (...args) => {

@@ -33,7 +33,7 @@ export function hashArg(arg) {
     return JSON.stringify(sortObject(arg))
 }
 
-export interface CacheaOptions {
+export interface CacheOptions {
     cache?: boolean
     promiseId?: string // defaults to the name of the function passed tp useLazyPromise
     cacheExpirationSeconds?: number
