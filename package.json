@@ -1,7 +1,7 @@
 {
   "name": "react-extra-hooks",
   "_": "[bump]",
-  "version": "2.2.7",
+  "version": "2.3.1",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
