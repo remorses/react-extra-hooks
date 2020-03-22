@@ -12,6 +12,9 @@ const states = {
     resolved: 'resolved',
 }
 
+const DEFAULT_CACHE_EXPIRATION = 300
+const DEFAULT_CACHE_SIZE = 500
+
 function reducer(state, action) {
     switch (action.type) {
         case states.pending:
@@ -55,11 +58,19 @@ interface MaybeCachedPromise<T = any> extends Promise<T> {
     cached?: boolean
 }
 
+function setCacheDefaults(cacheOptions: CacheOptions, defaultPromiseId) {
+    cacheOptions.promiseId = cacheOptions.promiseId || defaultPromiseId
+    cacheOptions.cacheExpirationSeconds =
+        cacheOptions.cacheExpirationSeconds || DEFAULT_CACHE_EXPIRATION
+    cacheOptions.cacheSize = cacheOptions.cacheSize || DEFAULT_CACHE_SIZE
+    return cacheOptions
+}
+
 export function useLazyPromise<Arguments extends any[], ResultType = any>(
     promise: (...x: Arguments) => Promise<ResultType> | null | undefined,
     cacheOptions = {} as CacheOptions,
 ): useLazyPromiseOutput<Arguments, ResultType> {
-    cacheOptions.promiseId = cacheOptions.promiseId || promise?.name
+    cacheOptions = setCacheDefaults(cacheOptions, promise?.name)
     const [{ error, result, loading }, dispatch] = useReducer(reducer, {
         error: undefined,
         result: undefined,

@@ -30,7 +30,9 @@ export function getFromCache({ promiseId, args }) {
 }
 
 export function hashArg(arg) {
-    return JSON.stringify(sortObject(arg))
+    const res = JSON.stringify(sortObject(arg))
+    // console.log('made hash ' + res)
+    return res
 }
 
 export interface CacheOptions {
@@ -48,6 +50,7 @@ export function updateCache({
     cacheSize,
     cacheExpirationSeconds,
 }) {
+    // console.log(memoryCache)
     if (!result) {
         return
     }

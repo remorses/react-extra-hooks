@@ -147,7 +147,7 @@ function usePaginationData(fetchSomething) {
     }
 
     const { result = [], loading, error } = usePromise(loadData, {
-        // cache: true,
+        cache: true,
         cacheExpirationSeconds: 3000000,
         args: [page],
     })
