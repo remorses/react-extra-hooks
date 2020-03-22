@@ -25,32 +25,40 @@ export function usePromise<ResultType = any>(
     promise: (...args: any) => Promise<ResultType> | null | undefined,
     options: CacheaOptions & UsePromiseOptions<ResultType> = {},
 ): usePromiseOutput<ResultType> {
+    // options defaults
+    options.promiseId = options.promiseId ?? promise?.name
+    options.args = options?.args || []
+
+    // get from cache
     const cacheHit = options.cache
         ? getFromCache({
               promiseId: options.promiseId ?? promise?.name,
               args: options.args,
           })
         : undefined
+    
+    
     const [
         execute,
         { result = cacheHit, error, loading = !cacheHit },
         invalidate,
     ] = useLazyPromise(promise, options)
 
+    // if the passed promise is null do nothing
     const isPromiseNull = !promise
-    const args = options?.args || []
-    const argsDeps = options.shallow ? args : [hashArg(args)]
+    const argsDeps = options.shallow ? options.args : [hashArg(options.args)]
+
     useEffect(() => {
         if (isPromiseNull) {
             return
         }
-        execute(...args).catch(identity)
+        execute(...options.args).catch(identity)
     }, [isPromiseNull, ...argsDeps])
 
     usePolling({
         enabled: options?.polling?.interval,
         argsDeps,
-        args,
+        args: options.args,
         execute: (args) => {
             invalidate()
             return execute(...args)

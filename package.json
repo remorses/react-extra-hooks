@@ -8,6 +8,11 @@
   "files": [
     "/dist/*"
   ],
+  "mocha": {
+    "require": "tests/init.js",
+    "spec": "tests/**.ts",
+    "timeout": 9999999999
+  },
   "scripts": {
     "test": "mocha --require ts-node/register --timeout 10000 tests/* --colors",
     "example": "parcel example/index.html"
@@ -16,12 +21,16 @@
   "author": "Tommaso De Rossi, morse <beats.by.morse@gmail.com>",
   "license": "ISC",
   "devDependencies": {
+    "@testing-library/react-hooks": "^3.2.1",
+    "@types/chai": "^4.2.11",
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.0.7",
     "@types/react": "^16.9.18",
+    "chai": "^4.2.0",
     "mocha": "^6.1.4",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
+    "react-test-renderer": "^16.13.1",
     "ts-node": "^8.2.0",
     "typescript": "^3.7.5"
   },

@@ -1,4 +1,4 @@
-import { useCallback, useReducer, useEffect } from 'react'
+import { useCallback, useReducer, useEffect, useMemo } from 'react'
 import {
     updateCache,
     CacheaOptions,
@@ -42,7 +42,7 @@ function reducer(state, action) {
 }
 
 export type useLazyPromiseOutput<Arguments extends any[], ResultType> = [
-    (...args: Arguments) => Promise<ResultType>,
+    (...args: Arguments) => MaybeCachedPromise<ResultType>,
     {
         result?: ResultType
         loading: boolean
@@ -50,6 +50,10 @@ export type useLazyPromiseOutput<Arguments extends any[], ResultType> = [
     },
     () => void,
 ]
+
+interface MaybeCachedPromise<T = any> extends Promise<T> {
+    cached?: boolean
+}
 
 export function useLazyPromise<Arguments extends any[], ResultType = any>(
     promise: (...x: Arguments) => Promise<ResultType> | null | undefined,
@@ -69,8 +73,8 @@ export function useLazyPromise<Arguments extends any[], ResultType = any>(
             console.log('for function ' + promise.toString())
         }
     }, [cacheOptions.promiseId, cacheOptions.cache])
-    const execute = useCallback(
-        makeExecute({ cacheOptions, promise, dispatch }),
+    const execute = useMemo(
+        () => makeExecute({ cacheOptions, promise, dispatch }),
         [!promise, dispatch, result],
     )
     const invalidate = () =>
@@ -80,7 +84,15 @@ export function useLazyPromise<Arguments extends any[], ResultType = any>(
     return [execute, { result, error, loading }, invalidate]
 }
 
-function makeExecute({ promise, cacheOptions, dispatch }) {
+function makeExecute({
+    promise,
+    cacheOptions,
+    dispatch,
+}: {
+    promise: Function
+    cacheOptions: CacheaOptions
+    dispatch: Function
+}) {
     return (...args) => {
         if (!promise) {
             throw new Error(
@@ -96,7 +108,9 @@ function makeExecute({ promise, cacheOptions, dispatch }) {
                     payload: hit,
                     type: states.resolved,
                 })
-                return Promise.resolve(hit)
+                const p: MaybeCachedPromise = Promise.resolve(hit)
+                p.cached = true
+                return p
             }
         }
         dispatch({ type: states.pending })
@@ -108,7 +122,7 @@ function makeExecute({ promise, cacheOptions, dispatch }) {
                         args,
                         cacheExpirationSeconds:
                             cacheOptions.cacheExpirationSeconds,
-                        cacheSize: cacheOptions.cacheExpirationSeconds,
+                        cacheSize: cacheOptions.cacheSize,
                         result,
                     })
                 }
