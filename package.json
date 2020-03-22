@@ -14,7 +14,7 @@
     "timeout": 9999999999
   },
   "scripts": {
-    "test": "mocha --require ts-node/register --timeout 10000 tests/* --colors",
+    "test": "mocha --require ts-node/register --timeout 10000 tests/* --colors --exit",
     "example": "parcel example/index.html"
   },
   "keywords": [],

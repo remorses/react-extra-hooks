@@ -23,9 +23,9 @@ export function getFromCache({ promiseId, args }) {
     const hash = hashArg({ promiseId })
     const secondHash = hashArg({ args })
     const hit = memoryCache[hash]?.[secondHash]
-    console.log(
-        `getting from cache ${hit} from promiseId '${promiseId}' and args '${args}'`,
-    )
+    // console.log(
+    //     `getting from cache ${hit} from promiseId '${promiseId}' and args '${args}'`,
+    // )
     return hit
 }
 
