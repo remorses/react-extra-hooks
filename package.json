@@ -35,8 +35,7 @@
     "typescript": "^3.7.5"
   },
   "dependencies": {
-    "@types/lodash.isequal": "^4.5.5",
-    "lodash.isequal": "^4.5.0",
+    "react-fast-compare": "^3.1.1",
     "sort-keys-recursive": "^2.0.1"
   }
 }

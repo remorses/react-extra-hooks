@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import isEqual from 'lodash.isequal'
+import isEqual from 'react-fast-compare'
 export { usePromise, usePromiseOutput } from './usePromise'
 export { useLazyPromise, useLazyPromiseOutput } from './useLazyPromise'
 export { useDebounce } from './useDebounce'
