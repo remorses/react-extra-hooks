@@ -24,8 +24,8 @@ const states = {
 const DEFAULT_CACHE_EXPIRATION = 300
 const DEFAULT_CACHE_SIZE = 500
 
-const makeReducer = (handler) => (state, action) => {
-    handler = handler || ((x) => x)
+const makeReducer = (reducer) => (state, action) => {
+    reducer = reducer || ((_, x) => x)
     switch (action.type) {
         case states.pending:
             return {
@@ -44,7 +44,7 @@ const makeReducer = (handler) => (state, action) => {
         case states.next:
             return {
                 error: undefined,
-                result: handler(action.payload),
+                result: reducer(state.result, action.payload),
                 loading: false,
             }
 
@@ -62,13 +62,13 @@ const makeReducer = (handler) => (state, action) => {
     }
 }
 
-export type useLazyObservableOutput<Arguments extends any[], ResultType> = [
+export type useLazyObservableOutput<Arguments extends any[], ReducedType> = [
     (
         ...args: Arguments
     ) => {
         unsubscribe: () => void
     },
-    UseObservableOutput<ResultType>,
+    UseObservableOutput<ReducedType>,
 ]
 
 export interface UseObservableOutput<ResultType> {
@@ -82,15 +82,19 @@ export type ObservableCreator<Arguments extends any[], ResultType> = (
     ...x: Arguments
 ) => Observable<ResultType> | null | undefined
 
-interface UseLazyObservableOptions<ResultType> {
-    handler?: (x: ResultType) => ResultType
+interface UseLazyObservableOptions<ResultType, ReducedType> {
+    reducer?: (ReducedType, x: ResultType) => ReducedType
 }
 
-export function useLazyObservable<Arguments extends any[], ResultType = any>(
+export function useLazyObservable<
+    Arguments extends any[],
+    ResultType = any,
+    ReducedType = any
+>(
     observableCreator: ObservableCreator<Arguments, ResultType>,
-    options: UseLazyObservableOptions<ResultType> = {},
+    options: UseLazyObservableOptions<ResultType, ReducedType> = {},
 ): useLazyObservableOutput<Arguments, ResultType> {
-    const reducer = useMemo(() => makeReducer(options.handler), [])
+    const reducer = useMemo(() => makeReducer(options.reducer), [])
     const [{ error, result, loading, complete }, dispatch] = useReducer(
         reducer,
         {

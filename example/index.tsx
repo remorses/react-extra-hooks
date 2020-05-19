@@ -66,8 +66,11 @@ const UseObservableExample = () => {
 }
 
 const UseLazyObservableExample = () => {
-    const [execute, { result, loading, error }] = useLazyObservable(() =>
-        interval(1000).pipe(map((i) => i + 1)),
+    const [execute, { result, loading, error }] = useLazyObservable(
+        () => interval(1000).pipe(map((i) => i + 1)),
+        {
+            reducer: (acc = [], x) => [...acc, x],
+        },
     )
     return (
         <div>

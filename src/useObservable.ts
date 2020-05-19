@@ -1,17 +1,19 @@
 import { useEffect, useState, useRef } from 'react'
-import { useLazyObservable, UseObservableOutput } from './useLazyObservable'
+import {
+    useLazyObservable,
+    UseObservableOutput,
+    UseLazyObservableOptions,
+} from './useLazyObservable'
 import { useRenderNumber, useDeepEffect } from '.'
 import { hashArg } from './cache'
 import { ObservableCreator } from './useLazyObservable'
 
-export interface UseObservableOptions<ResultType> {
-    args?: any[]
-    handler?: (x: ResultType) => ResultType
-}
-
-export function useObservable<ResultType = any>(
+export function useObservable<ResultType = any, ReducedType = any>(
     observableCreator: ObservableCreator<any, ResultType>,
-    options: UseObservableOptions<ResultType> = {},
+    options: { args?: any[] } & UseLazyObservableOptions<
+        ResultType,
+        ReducedType
+    > = {},
 ): UseObservableOutput<ResultType> {
     // options defaults
     options.args = options?.args || []
@@ -34,4 +36,3 @@ export function useObservable<ResultType = any>(
 
     return { result, error, loading, complete }
 }
-
