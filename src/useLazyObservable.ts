@@ -82,14 +82,14 @@ export type ObservableCreator<Arguments extends any[], ResultType> = (
     ...x: Arguments
 ) => Observable<ResultType> | null | undefined
 
-interface UseLazyObservableOptions<ResultType, ReducedType> {
-    reducer?: (ReducedType, x: ResultType) => ReducedType
+export interface UseLazyObservableOptions<ResultType, ReducedType> {
+    reducer?: (acc: ReducedType, x: ResultType) => ReducedType
 }
 
 export function useLazyObservable<
     Arguments extends any[],
     ResultType = any,
-    ReducedType = any
+    ReducedType = ResultType
 >(
     observableCreator: ObservableCreator<Arguments, ResultType>,
     options: UseLazyObservableOptions<ResultType, ReducedType> = {},

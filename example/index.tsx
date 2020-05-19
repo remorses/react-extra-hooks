@@ -47,7 +47,7 @@ const UsePromiseExample = () => {
 }
 
 const UseObservableExample = () => {
-    const { result, loading, error } = useObservable(() =>
+    const { result, loading, error } = useObservable<number>(() =>
         interval(1000).pipe(
             map((i) => {
                 if (i == 2) {
@@ -66,7 +66,7 @@ const UseObservableExample = () => {
 }
 
 const UseLazyObservableExample = () => {
-    const [execute, { result, loading, error }] = useLazyObservable(
+    const [execute, { result, loading, error }] = useLazyObservable<any[], number, number[]>(
         () => interval(1000).pipe(map((i) => i + 1)),
         {
             reducer: (acc = [], x) => [...acc, x],

@@ -8,7 +8,7 @@ import { useRenderNumber, useDeepEffect } from '.'
 import { hashArg } from './cache'
 import { ObservableCreator } from './useLazyObservable'
 
-export function useObservable<ResultType = any, ReducedType = any>(
+export function useObservable<ResultType = any, ReducedType = ResultType>(
     observableCreator: ObservableCreator<any, ResultType>,
     options: { args?: any[] } & UseLazyObservableOptions<
         ResultType,
