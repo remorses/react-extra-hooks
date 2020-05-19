@@ -25,14 +25,13 @@ export function useObservable<ResultType = any, ReducedType = ResultType>(
 
     // if the passed obs is null do nothing
     const isObservableNull = !observableCreator
-    const argsDeps = [hashArg(options.args)]
 
     useEffect(() => {
         if (isObservableNull) {
             return
         }
         return execute(...options.args).unsubscribe
-    }, [isObservableNull, ...argsDeps])
+    }, [isObservableNull, hashArg(options.args)])
 
     return { result, error, loading, complete }
 }
