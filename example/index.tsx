@@ -1,7 +1,14 @@
 import { strict as assert } from 'assert'
 import DOM from 'react-dom'
-import { usePromise, useLazyPromise } from '../src'
+import {
+    usePromise,
+    useLazyPromise,
+    useObservable,
+    useLazyObservable,
+} from '../src'
 import React, { useState, useEffect } from 'react'
+import { interval } from 'rxjs'
+import { map } from 'rxjs/operators'
 
 const sleep = (t) => new Promise((res) => setTimeout(res, t))
 
@@ -35,6 +42,37 @@ const UsePromiseExample = () => {
     return (
         <div>
             <h1>{r2loading ? 'loading' : r2?.x}</h1>
+        </div>
+    )
+}
+
+const UseObservableExample = () => {
+    const { result, loading, error } = useObservable(() =>
+        interval(1000).pipe(
+            map((i) => {
+                if (i == 2) {
+                    throw new Error("oh my god didn't expect 2")
+                }
+                return i
+            }),
+        ),
+    )
+    return (
+        <div>
+            <h1>{loading ? 'loading' : JSON.stringify(result)}</h1>
+            {error && <h1>{error.message}</h1>}
+        </div>
+    )
+}
+
+const UseLazyObservableExample = () => {
+    const [execute, { result, loading, error }] = useLazyObservable(() =>
+        interval(1000).pipe(map((i) => i + 1)),
+    )
+    return (
+        <div>
+            <button onClick={() => execute()}>start</button>
+            <h1>{loading ? 'loading' : JSON.stringify(result)}</h1>
         </div>
     )
 }
@@ -205,28 +243,37 @@ async function fetchSomething({ page }) {
 const App = () => {
     return (
         <>
-            <Cornice>
+            <Cornice name='useObservable'>
+                <UseObservableExample />
+            </Cornice>
+            <Cornice name='useLazyObservable'>
+                <UseLazyObservableExample />
+            </Cornice>
+            <Cornice name='usePromise'>
                 <UsePromiseExample />
             </Cornice>
-            <Cornice>
+            <Cornice name='useLazyPromise'>
                 <UseLazyPromiseExample />
             </Cornice>
-            <Cornice>
+            <Cornice name='use polling'>
                 <PollingExample />
             </Cornice>
-            <Cornice>
+            <Cornice name='using null as promise at first'>
                 <UseDelayedExample />
             </Cornice>
-            <Cornice>
+            <Cornice name='pagination'>
                 <PaginationExample />
             </Cornice>
         </>
     )
 }
 
-const Cornice = (props) => {
+const Cornice = ({ name, children }) => {
     return (
-        <div style={{ padding: '30px', border: '1px solid red' }} {...props} />
+        <div style={{ padding: '30px', border: '1px solid red' }}>
+            <h4>{name}</h4>
+            {children}
+        </div>
     )
 }
 

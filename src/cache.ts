@@ -35,13 +35,6 @@ export function hashArg(arg) {
     return res
 }
 
-export interface CacheOptions {
-    cache?: boolean
-    promiseId?: string // defaults to the name of the function passed tp useLazyPromise
-    cacheExpirationSeconds?: number
-    cacheSize?: number
-    shallow?: boolean
-}
 
 export function updateCache({
     promiseId,

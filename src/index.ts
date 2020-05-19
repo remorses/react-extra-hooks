@@ -2,6 +2,8 @@ import { useEffect, useState, useRef } from 'react'
 import isEqual from 'react-fast-compare'
 export { usePromise, usePromiseOutput } from './usePromise'
 export { useLazyPromise, useLazyPromiseOutput } from './useLazyPromise'
+export { useObservable } from './useObservable'
+export { useLazyObservable } from './useLazyObservable'
 export { useDebounce } from './useDebounce'
 
 export const sleep = (t) => new Promise((res) => setTimeout(res, t))
