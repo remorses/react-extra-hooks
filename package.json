@@ -1,7 +1,7 @@
 {
   "name": "react-extra-hooks",
   "_": "[bump]",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "description": "Hooks for data fetching and more",
   "main": "dist/index.js",
   "module": "esm/index.js",
