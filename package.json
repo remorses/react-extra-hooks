@@ -2,11 +2,14 @@
   "name": "react-extra-hooks",
   "_": "[bump]",
   "version": "2.3.2",
-  "description": "",
+  "description": "Hooks for data fetching and more",
   "main": "dist/index.js",
+  "module": "esm/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "/dist/*"
+    "dist",
+    "esm",
+    "src"
   ],
   "mocha": {
     "require": "tests/init.js",

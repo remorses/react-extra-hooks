@@ -15,7 +15,8 @@
         "noImplicitAny": false,
         "allowSyntheticDefaultImports": true,
         "jsx": "react",
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "sourceMap": true
     },
     "exclude": [
         "node_modules",
