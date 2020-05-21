@@ -5,6 +5,7 @@
   "description": "Hooks for data fetching and more",
   "main": "dist/index.js",
   "module": "esm/index.js",
+  "sideEffects": false,
   "types": "dist/index.d.ts",
   "files": [
     "dist",
