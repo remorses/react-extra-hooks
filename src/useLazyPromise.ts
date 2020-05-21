@@ -1,9 +1,9 @@
 import { useCallback, useReducer, useEffect, useMemo } from 'react'
 import {
     updateCache,
-    CacheOptions,
     clearMemoryCache,
     getFromCache,
+    CacheOptions,
 } from './cache'
 
 const states = {

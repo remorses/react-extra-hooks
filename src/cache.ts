@@ -9,6 +9,14 @@ function getWindow() {
     return window
 }
 
+export interface CacheOptions {
+    cache?: boolean
+    shallow?: boolean
+    promiseId?: string
+    cacheSize?: number
+    cacheExpirationSeconds?: number
+}
+
 const win = getWindow()
 win[reactExtraHooksCacheKey] = win[reactExtraHooksCacheKey] || {}
 let memoryCache = win[reactExtraHooksCacheKey]
