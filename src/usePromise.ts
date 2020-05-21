@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { CacheOptions, getFromCache, hashArg } from './cache'
 import { useLazyPromise } from './useLazyPromise'
-import { useRenderNumber, useDeepEffect } from '.'
 
 export interface usePromiseOutput<ResultType> {
     result?: ResultType

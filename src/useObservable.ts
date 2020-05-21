@@ -4,7 +4,6 @@ import {
     UseObservableOutput,
     UseLazyObservableOptions,
 } from './useLazyObservable'
-import { useRenderNumber, useDeepEffect } from '.'
 import { hashArg } from './cache'
 import { ObservableCreator } from './useLazyObservable'
 
